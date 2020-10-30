@@ -11,7 +11,10 @@ def index(request):
 def revisao_consulta(request):
     if request.method == 'POST':
         form = PassagemForms(request.POST)
-        context = {
-            'form': form
-        }
-        return render(request, 'minha_consulta.html', context)
+        # verifica se o formulário é válido:
+        if form.is_valid():
+            context = {'form': form }
+            return render(request, 'minha_consulta.html', context)
+        else:
+            context = {'form': form }
+            return render(request, 'index.html', context)
