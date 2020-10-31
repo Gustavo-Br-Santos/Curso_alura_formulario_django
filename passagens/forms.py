@@ -3,24 +3,46 @@ from tempus_dominus.widgets import DatePicker
 from datetime import datetime
 from passagens.classe_viagem import tipos_de_classes
 from passagens.validation import *
+from passagens.models import Passagem, Pessoa, ClasseViagem
 
-class PassagemForms(forms.Form):
-    origem = forms.CharField(label='Origem', max_length=100)
-    destino = forms.CharField(label='Destino', max_length=100)
-    data_ida = forms.DateField(label="Ida", widget=DatePicker())
-    data_volta = forms.DateField(label='Volta', widget=DatePicker())
+class PassagemForms(forms.ModelForm):
+    """ 
+    Agora vamos usar ModelForm, que indica que iremos usar os formulários
+    com base nos nossos modelos.
+    """
     data_pesquisa = forms.DateField(label='Data da pesquisa', disabled=True, initial=datetime.today())
-    classe_viagem = forms.ChoiceField(label='Classe do vôo', choices= tipos_de_classes)
-    informacoes = forms.CharField(
-        label='Informações extras',
-        max_length=200,
-        widget=forms.Textarea(),
-        required=False
-    )
-    email = forms.EmailField(label='Email', max_length=150)
 
+    class Meta:
 
+        """
+        Quando trabalhamos com ModelForms, a classe Meta permite fazer a manipulação
+        das informações que estão no nosso modelo para gerar o nosso formulário.
+        Nela, nós passamos o modelo base que vamos utilizar e os campos desse
+        modelo que iremos utilizar.
 
+        Obs.1 O campo fiels irá exibir no formulário as labels da mesma forma
+        que estão no modelo. Para melhorarmos o UX, podemos usar o atributo labels:
+
+        Obs.2 Para alterar os campos, podemos usar a propriedade widgets.
+
+        Obs.3 Perceba que, como o campo data_pesquisa possue várias alterações diferentes
+        dos outros campos, podemos trazer apenas esse campo a parte com as características 
+        desejadas. No nosso caso, importamos esse campo antes da classe Meta.
+        """
+        model = Passagem
+        # fields = ['origem', 'destino'] - Podemos usar dessa forma para trazer apenas alguns campos desejados
+        fields = '__all__'  # Ou dessa forma para trazer todos os campos
+        labels = {
+            'data_ida':'Data de ida',
+            'data_volta':'Data de volta',
+            'informacoes':'Informações',
+            'classe_viagem':'Classe da viagem'
+            }
+        widgets = {
+            'data_ida':DatePicker(),
+            'data_volta':DatePicker(),
+        }
+        
     """
     Serão mantidas para estudo, embora não vai mais ser usado mai no programa,
     visto que irei criar um arquivo novo responsável pela validação do formulário.    
@@ -66,4 +88,8 @@ class PassagemForms(forms.Form):
 
         return self.cleaned_data
 
-
+class PessoaForms(forms.ModelForm):
+    class Meta:
+        model = Pessoa
+        exclude = ['nome'] # Tem a função oposta do fields. Em vez de trazer os campos entre colchetes, ele traz todos os campos, menos os que estão entre colchetes
+        

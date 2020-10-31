@@ -5,6 +5,7 @@
 <section class="container-fluid col-8">
     <form action="{% url 'minha_consulta' %}" method="post">
         {% csrf_token %}
+        <!--Form passagem-->
         {% for field in form.visible_fields %}
             <div class="form-group">
                 <label for="{{field.id_for_label}}">{{field.label}}</label>
@@ -15,6 +16,13 @@
                 {{error}}
             </section>
             {% endfor %}
+        {% endfor %}
+        <!--Form pessoa-->
+        {% for field in pessoa_form.visible_fields %}
+            <div class="form-group">
+                <label for="{{field.id_for_label}}">{{field.label}}</label>
+                {{field|add_class:'form-control'}}
+            </div>
         {% endfor %}
         <input type="submit" value="Enviar" class="btn btn-success"> 
     </form>
